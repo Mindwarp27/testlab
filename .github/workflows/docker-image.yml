@@ -1,4 +1,4 @@
-name: Create 
+name: Create images
 on:
   push:
   pull_request:
