@@ -1,11 +1,9 @@
-name: Docker Image CI
+name: Create 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 jobs:
-  build:
+  create_front:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,11 +13,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - name: Build the Docker image
+      - name: Build the front image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          docker build . --file Dockerfile --tag $DOCKER_USER/todolist:latest
+          docker build . --file front --tag $DOCKER_USER/todolist:latest
       - name: Docker push
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
@@ -28,3 +26,27 @@ jobs:
       - name: Docker logout
         run: |
           docker logout
+
+  create_back:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Build the back image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker build . --file front --tag $DOCKER_USER/todolist:latest
+      - name: Docker push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker push $DOCKER_USER/todolist:latest
+      - name: Docker logout
+        run: |
+          docker logout          
