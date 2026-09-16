@@ -1,0 +1,12 @@
+# Build Image
+FROM node:10.24-alpine3.11 as build
+RUN mkdir /todo
+WORKDIR /todo
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
+COPY . .
+RUN npm run build --prod
+# Run image
+FROM nginx:1.25.0-alpine
+COPY --from=build /todo/dist /usr/share/nginx/htm
