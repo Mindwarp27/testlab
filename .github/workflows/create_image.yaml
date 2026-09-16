@@ -1,0 +1,41 @@
+name: create images
+on: 
+  workflow_dispatch:          
+jobs:
+  create_front:
+    build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker build . --file front --tag $DOCKER_USER/todolist:latest
+      - name: Docker push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker push $DOCKER_USER/todolist:latest
+      - name: Docker logout
+        run: |
+          docker logout
+          
+   create_back:
+    build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker build . --file back --tag $DOCKER_USER/todolist:latest
+      - name: Docker push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker push $DOCKER_USER/todolist:latest
+      - name: Docker logout
+        run: |
+          docker logout         
